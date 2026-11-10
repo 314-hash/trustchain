@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Settings, Shield, Globe, Database, Key, CheckCircle2, Sparkles, Server } from 'lucide-react';
+import { Settings, Shield, Globe, Database, Key, CheckCircle2, Sparkles, Server, Zap, RefreshCw } from 'lucide-react';
+import { testRpcHealth } from '../services/rpcService';
 
 export const SettingsView: React.FC = () => {
   const [selectedChainId, setSelectedChainId] = useState('8453');
@@ -7,11 +8,36 @@ export const SettingsView: React.FC = () => {
   const [customRegistryContract, setCustomRegistryContract] = useState('0x71C8354366A96C2522778B27bF13fF1A3d596495');
   const [offChainStorageMode, setOffChainStorageMode] = useState('encrypted_vault');
   const [isSaved, setIsSaved] = useState(false);
+  const [testingRpc, setTestingRpc] = useState(false);
+  const [rpcStatus, setRpcStatus] = useState<{ online: boolean; block: number; latency: number; msg: string } | null>(null);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
+  };
+
+  const handleTestRpc = async () => {
+    setTestingRpc(true);
+    setRpcStatus(null);
+    try {
+      const health = await testRpcHealth(Number(selectedChainId));
+      setRpcStatus({
+        online: health.isOnline,
+        block: health.blockNumber,
+        latency: health.latencyMs,
+        msg: `Connected to ${health.rpcEndpointUsed} • Block #${health.blockNumber} • Latency ${health.latencyMs}ms`,
+      });
+    } catch (e: any) {
+      setRpcStatus({
+        online: false,
+        block: 0,
+        latency: 0,
+        msg: `RPC connection timeout: ${e.message}`,
+      });
+    } finally {
+      setTestingRpc(false);
+    }
   };
 
   const handleChainChange = (chainId: string) => {
@@ -85,6 +111,31 @@ export const SettingsView: React.FC = () => {
               <span className="text-[10px] text-slate-500">
                 Leave default to use TrustChain's verified Base L2 registry or provide your private institutional contract.
               </span>
+            </div>
+
+            <div className="md:col-span-2 pt-2 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={handleTestRpc}
+                disabled={testingRpc}
+                className="py-1.5 px-3 rounded-lg bg-[#141d30] hover:bg-[#1b2742] border border-amber-500/40 text-amber-300 font-semibold text-xs flex items-center gap-1.5 cursor-pointer self-start transition"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span>{testingRpc ? 'Testing Direct RPC...' : 'Test Direct RPC Connection'}</span>
+              </button>
+
+              {rpcStatus && (
+                <div
+                  className={`text-xs font-mono px-3 py-1.5 rounded-lg border flex items-center gap-2 ${
+                    rpcStatus.online
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                      : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${rpcStatus.online ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}></span>
+                  <span>{rpcStatus.msg}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

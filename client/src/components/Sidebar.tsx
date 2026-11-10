@@ -105,12 +105,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, onS
         <div className="flex items-center justify-between mb-1">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            EVM Adapter
+            Serverless RPC
           </span>
           <span className="text-amber-400 font-mono text-[10px] font-bold">Base L2 (8453)</span>
         </div>
         <div className="flex items-center justify-between text-[10px]">
-          <span className="text-slate-500">Off-chain Vault: Enforced</span>
+          <span className="text-slate-500">Architecture</span>
+          <span className="text-amber-300 font-semibold">Edge / Serverless</span>
+        </div>
+        <div className="flex items-center justify-between text-[10px] mt-0.5">
+          <span className="text-slate-500">Gas Economics</span>
           <span className="text-emerald-400 font-bold">100% Free Public</span>
         </div>
       </div>

@@ -40,13 +40,16 @@ app.get('/', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`  🛡️ TRUSTCHAIN AUDIT ENGINE ONLINE ON PORT ${PORT}      `);
-  console.log(`  Modules: Smart Contract | Streaming | Publishing     `);
-  console.log(`  Registry: EVM Evidence Anchoring (Base / L2)          `);
-  console.log(`=======================================================`);
-});
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`  🛡️ TRUSTCHAIN AUDIT ENGINE ONLINE ON PORT ${PORT}      `);
+    console.log(`  Modules: Smart Contract | Streaming | Publishing     `);
+    console.log(`  Registry: EVM Evidence Anchoring (Base / L2)          `);
+    console.log(`  Serverless Ready: Vercel / Edge & Base L2 RPC Proxy   `);
+    console.log(`=======================================================`);
+  });
+}
 
 export default app;
 

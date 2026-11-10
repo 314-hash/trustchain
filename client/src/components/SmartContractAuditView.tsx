@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Code2, ShieldAlert, CheckCircle2, AlertTriangle, Sparkles, Terminal, FileCode, Play } from 'lucide-react';
 import { AuditRecord } from '../types';
+import { runClientSmartContractAudit } from '../services/clientAuditEngine';
 
 interface SmartContractAuditViewProps {
   onAuditCompleted: (audit: AuditRecord) => void;
@@ -91,11 +92,22 @@ contract SecureVault is ReentrancyGuard, Ownable {
           projectName: `${contractName}.sol`,
         }),
       });
-      const data = await res.json();
-      setAuditResult(data.audit);
-      onAuditCompleted(data.audit);
+      if (res.ok) {
+        const data = await res.json();
+        setAuditResult(data.audit);
+        onAuditCompleted(data.audit);
+      } else {
+        throw new Error('API unavailable, switching to Serverless Client Engine');
+      }
     } catch (e) {
-      console.error(e);
+      console.warn('Using client-side serverless audit engine:', e);
+      try {
+        const fallback = await runClientSmartContractAudit(contractCode, contractName);
+        setAuditResult(fallback.audit);
+        onAuditCompleted(fallback.audit);
+      } catch (fallbackErr) {
+        console.error('Client audit failed:', fallbackErr);
+      }
     } finally {
       setIsLoading(false);
     }

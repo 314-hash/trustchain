@@ -63,3 +63,4 @@ Based on direct inspection of the cloned repository (`t3mp3st_repo`):
    Passive probes only; zero denial-of-service, zero stealth persistence, and zero credential exfiltration.
 5. **Auditable Evidence:**
    Every finding records the exact tool, version (`v3.2.0`), raw scanner output, and reproduction timestamp.
+

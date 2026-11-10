@@ -56,6 +56,24 @@ TrustChain Audit allows any business—whether a movie streaming service like Ne
 
 ---
 
+## ⚡ Serverless Architecture & 1-Click Cloud Deployment
+
+TrustChain Audit is engineered with a **Serverless-First** architecture (similar to Piso Chain):
+
+- **Vercel Serverless Functions (`api/index.js`):** Run the backend API on-demand with zero cold-boot overhead and zero monthly hosting costs.
+- **Direct RPC Reverse Proxy (`/rpc`):** In `vercel.json`, `/rpc` proxies directly to **Base Mainnet L2** (`https://mainnet.base.org`) and `/rpc/sepolia` to Base Sepolia (`https://sepolia.base.org`). The frontend makes direct EVM calls with zero CORS restrictions.
+- **Client-Side Serverless Fallback Engine:** If the backend API is unreachable or running purely client-side (e.g. GitHub Pages or offline), the browser runs the Solidity AST scanner, ISBN checksum validator, and Web Crypto SHA-256 fingerprinting natively with local storage persistence.
+- **Verifiable Scannable QR Codes:** Every on-chain attestation and PDF audit report includes a real-time QR code that anyone can scan with a smartphone camera to inspect the Base L2 blockchain transaction and SHA-256 fingerprint.
+
+### Deploy to Vercel in 1 Click:
+```bash
+# Deploy instantly with zero configuration
+vercel
+```
+The root `vercel.json` automatically compiles the serverless API, builds the Vite React client to `client/dist`, proxies Base RPC requests, and serves the platform worldwide.
+
+---
+
 ## 💻 Quickstart (Run Locally in 2 Minutes)
 
 ### Prerequisites

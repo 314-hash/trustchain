@@ -13,15 +13,19 @@ import {
   Info,
   X,
   Printer,
+  Award,
+  QrCode,
 } from 'lucide-react';
 import { AuditRecord, AuditFinding } from '../types';
 import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
 
 interface MyAuditsProps {
   audits: AuditRecord[];
   selectedAuditId?: string | null;
   onClearSelectedAudit?: () => void;
   onSelectAudit?: (id: string) => void;
+  onViewCertificate?: (certificateId: string) => void;
   onStartAuditClick: () => void;
 }
 
@@ -30,6 +34,7 @@ export const MyAudits: React.FC<MyAuditsProps> = ({
   selectedAuditId,
   onClearSelectedAudit,
   onSelectAudit,
+  onViewCertificate,
   onStartAuditClick,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -46,7 +51,7 @@ export const MyAudits: React.FC<MyAuditsProps> = ({
     return matchesSearch && matchesCat;
   });
 
-  const generatePDFReport = (audit: AuditRecord) => {
+  const generatePDFReport = async (audit: AuditRecord) => {
     const doc = new jsPDF();
     const gold = [245, 158, 11];
     const dark = [17, 23, 38];
@@ -64,6 +69,22 @@ export const MyAudits: React.FC<MyAuditsProps> = ({
     doc.setTextColor(255, 255, 255);
     doc.text('Verify the Platform. Protect the Content. Prove the Records.', 14, 28);
     doc.text(`Audit ID: ${audit.auditNumber} | Date: ${new Date(audit.createdAt).toLocaleDateString()}`, 14, 34);
+
+    // Embed QR code on PDF
+    try {
+      const qrDataUrl = await QRCode.toDataURL(
+        audit.associatedCertificateId
+          ? `${window.location.origin}/?verify=${audit.associatedCertificateId}`
+          : `${window.location.origin}/?audit=${audit.id}`,
+        { width: 120, margin: 1, color: { dark: '#0A0D16', light: '#FFFFFF' } }
+      );
+      doc.addImage(qrDataUrl, 'PNG', 150, 48, 45, 45);
+      doc.setFontSize(7);
+      doc.setTextColor(120, 120, 120);
+      doc.text('Scan to Verify On-Chain', 152, 97);
+    } catch (e) {
+      console.warn('QR generation skipped:', e);
+    }
 
     // Project Info
     doc.setTextColor(30, 41, 59);
@@ -328,7 +349,19 @@ export const MyAudits: React.FC<MyAuditsProps> = ({
                   {activeModalAudit.associatedCertificateId || 'Off-chain'}
                 </div>
               </div>
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-end gap-2">
+                {activeModalAudit.associatedCertificateId && (
+                  <button
+                    onClick={() => {
+                      setActiveModalAudit(null);
+                      onViewCertificate?.(activeModalAudit.associatedCertificateId!);
+                    }}
+                    className="py-2 px-3 rounded-lg bg-[#141d30] hover:bg-[#1b2742] border border-amber-500/50 text-amber-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-sm transition"
+                  >
+                    <Award className="w-3.5 h-3.5 text-amber-400" />
+                    <span>View Certificate</span>
+                  </button>
+                )}
                 <button
                   onClick={() => generatePDFReport(activeModalAudit)}
                   className="py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md shadow-amber-500/20"

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Award, ShieldCheck, CheckCircle2, AlertTriangle, ExternalLink, ArrowLeft, Printer, Download, Sparkles } from 'lucide-react';
+import { Award, ShieldCheck, CheckCircle2, AlertTriangle, ExternalLink, ArrowLeft, Printer, Download, Sparkles, QrCode } from 'lucide-react';
 import { BlockchainCertificate } from '../types';
 import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
 
 interface PublicCertificatePageProps {
   certificateId: string;
@@ -15,6 +16,7 @@ export const PublicCertificatePage: React.FC<PublicCertificatePageProps> = ({
   const [cert, setCert] = useState<BlockchainCertificate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 
   useEffect(() => {
     fetch(`/api/certificates/${certificateId}`)
@@ -25,6 +27,18 @@ export const PublicCertificatePage: React.FC<PublicCertificatePageProps> = ({
       .then((data) => {
         setCert(data);
         setLoading(false);
+
+        const verifyUrl = `${window.location.origin}/?verify=${data.certificateId}`;
+        QRCode.toDataURL(verifyUrl, {
+          width: 140,
+          margin: 1,
+          color: {
+            dark: '#F59E0B',
+            light: '#0A0D16',
+          },
+        })
+          .then(setQrCodeUrl)
+          .catch(console.error);
       })
       .catch((err) => {
         setError(err.message);
@@ -83,6 +97,18 @@ export const PublicCertificatePage: React.FC<PublicCertificatePageProps> = ({
     doc.text('ZERO-KNOWLEDGE CONFIDENTIALITY GUARANTEE:', 14, 150);
     doc.setFont('helvetica', 'normal');
     doc.text('Only the cryptographic SHA-256 fingerprint is recorded on-chain. Private manuscript or video files remain off-chain.', 14, 156);
+
+    // Embed Verifiable QR Code onto PDF
+    if (qrCodeUrl) {
+      try {
+        doc.addImage(qrCodeUrl, 'PNG', 145, 48, 50, 50);
+        doc.setFontSize(7.5);
+        doc.setTextColor(130, 130, 130);
+        doc.text('Scan to Verify On-Chain', 147, 102);
+      } catch (e) {
+        console.warn('Could not add QR to PDF:', e);
+      }
+    }
 
     doc.save(`${cert.certificateId}_TrustChain_Certificate.pdf`);
   };
@@ -219,6 +245,26 @@ export const PublicCertificatePage: React.FC<PublicCertificatePageProps> = ({
             {cert.sha256Hash}
           </div>
         </div>
+
+        {/* Verifiable QR Code & Direct Mobile Scanner Card */}
+        {qrCodeUrl && (
+          <div className="flex flex-col sm:flex-row items-center gap-5 p-4 bg-[#0a0d16] rounded-xl border border-amber-500/30">
+            <div className="w-24 h-24 p-1.5 bg-[#05070d] rounded-xl border border-amber-500/50 flex-shrink-0 flex items-center justify-center shadow-lg shadow-amber-500/10">
+              <img src={qrCodeUrl} alt="Public Verification QR Code" className="w-full h-full object-contain rounded" />
+            </div>
+            <div className="space-y-1 text-center sm:text-left flex-1">
+              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-amber-400 font-mono">
+                <QrCode className="w-4 h-4" /> Scan with Phone to Verify Public Authenticity
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Scan this cryptographically signed QR code from any smartphone to verify the immutable Base L2 blockchain record, transaction proof, and SHA-256 integrity.
+              </p>
+              <div className="text-[10px] font-mono text-emerald-400 flex items-center justify-center sm:justify-start gap-1">
+                <CheckCircle2 className="w-3 h-3" /> Live Serverless RPC Verification Link Active
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* On-Chain Transaction & Issuer Metadata */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">

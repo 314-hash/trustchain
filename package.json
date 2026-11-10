@@ -10,10 +10,18 @@
     "dev:client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix server && npm run build --prefix client",
+    "build:server": "npm run build --prefix server",
+    "build:client": "npm run build --prefix client",
+    "vercel-build": "npm run build:server && npm run build:client",
+    "install:all": "npm install --prefix server && npm install --prefix client",
     "test": "npm test --prefix server",
     "contracts:compile": "node scripts/compileContracts.js",
     "contracts:deploy": "node scripts/deployRegistry.js"
   },
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "devDependencies": {
     "concurrently": "^9.1.2",
     "solc": "^0.8.24"

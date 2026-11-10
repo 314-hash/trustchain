@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Wallet, ShieldCheck, ExternalLink, CheckCircle, ChevronDown, Bell } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Wallet, ShieldCheck, ExternalLink, CheckCircle, ChevronDown, Bell, Zap, Activity } from 'lucide-react';
+import { testRpcHealth } from '../services/rpcService';
 
 interface NavbarProps {
   currentTab: string;
@@ -10,6 +11,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState('Base (Coinbase L2)');
+  const [blockHeight, setBlockHeight] = useState<number | null>(null);
+  const [rpcLatency, setRpcLatency] = useState<number | null>(null);
+
+  useEffect(() => {
+    testRpcHealth(8453)
+      .then((health) => {
+        setBlockHeight(health.blockNumber);
+        setRpcLatency(health.latencyMs);
+      })
+      .catch(() => {});
+  }, []);
 
   const tabTitles: Record<string, string> = {
     overview: 'Executive Dashboard & Platform Health',
@@ -57,6 +69,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Serverless & Base L2 Live Block */}
+        <div className="hidden xl:flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-lg text-[11px] text-amber-300 font-mono">
+          <Zap className="w-3 h-3 text-amber-400" />
+          <span>Serverless &bull; Base L2 {blockHeight ? `#${(blockHeight / 1000000).toFixed(2)}M` : 'Connected'}</span>
+        </div>
+
         {/* Free Public Access Pill */}
         <div className="hidden lg:flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-[11px] text-emerald-400 font-bold">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -67,6 +85,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
         <div className="hidden md:flex items-center gap-2 bg-[#131b2e] border border-[#232f45] px-3 py-1.5 rounded-lg text-xs text-slate-300">
           <span className="w-2 h-2 rounded-full bg-amber-400"></span>
           <span className="font-medium text-slate-200">{selectedNetwork}</span>
+          {rpcLatency && (
+            <span className="text-[10px] text-slate-400 font-mono hidden 2xl:inline">({rpcLatency}ms)</span>
+          )}
         </div>
 
         {/* Wallet Connect Button */}

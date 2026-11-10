@@ -17,6 +17,7 @@ import { TeamManagementView } from './components/TeamManagementView';
 import { SettingsView } from './components/SettingsView';
 import { PublicCertificatePage } from './components/PublicCertificatePage';
 import { AuditRecord, BlockchainCertificate, MovieRightsRecord, PublishingRecord } from './types';
+import { getLocalAudits, getLocalCertificates } from './services/clientAuditEngine';
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>('overview');
@@ -27,7 +28,7 @@ export function App() {
   const [selectedAuditId, setSelectedAuditId] = useState<string | null>(null);
   const [publicCertId, setPublicCertId] = useState<string | null>(null);
 
-  // Fetch initial seed data from backend
+  // Fetch initial seed data from backend or fallback to local offline storage
   const loadPlatformData = async () => {
     try {
       const [auditsRes, certsRes, rightsRes, pubRes] = await Promise.all([
@@ -38,11 +39,25 @@ export function App() {
       ]);
 
       if (auditsRes.ok) setAudits(await auditsRes.json());
+      else {
+        const local = getLocalAudits();
+        if (local.length > 0) setAudits(local);
+      }
+
       if (certsRes.ok) setCertificates(await certsRes.json());
+      else {
+        const localC = getLocalCertificates();
+        if (localC.length > 0) setCertificates(localC);
+      }
+
       if (rightsRes.ok) setMovieRights(await rightsRes.json());
       if (pubRes.ok) setPublishingRecords(await pubRes.json());
     } catch (e) {
-      console.warn('Backend loading warning:', e);
+      console.warn('Backend loading note (running in serverless / local mode):', e);
+      const local = getLocalAudits();
+      if (local.length > 0) setAudits(local);
+      const localC = getLocalCertificates();
+      if (localC.length > 0) setCertificates(localC);
     }
   };
 
@@ -130,6 +145,7 @@ export function App() {
               selectedAuditId={selectedAuditId}
               onClearSelectedAudit={() => setSelectedAuditId(null)}
               onSelectAudit={handleSelectAudit}
+              onViewCertificate={(id) => setPublicCertId(id)}
               onStartAuditClick={() => setCurrentTab('wizard')}
             />
           )}
@@ -146,6 +162,7 @@ export function App() {
             <PublishingAuditView
               publishingRecords={publishingRecords}
               onPublicationAdded={handlePublicationAdded}
+              onSelectCertificate={(id) => setPublicCertId(id)}
             />
           )}
 
