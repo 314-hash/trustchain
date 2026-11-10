@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  trustchain-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trustchain-audit-api
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://trustchain:trustchain_pass@postgres:5432/trustchain_db
+      - EVM_CHAIN_ID=8453
+      - EVM_RPC_URL=https://mainnet.base.org
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: trustchain-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=trustchain
+      - POSTGRES_PASSWORD=trustchain_pass
+      - POSTGRES_DB=trustchain_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/src/db/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+

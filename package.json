@@ -1,0 +1,25 @@
+{
+  "name": "trustchain-audit",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "TRUSTCHAIN AUDIT - Non-Technical Blockchain Audit Platform for Streaming & Digital Publishing",
+  "private": true,
+  "scripts": {
+    "start": "node server/dist/index.js",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix server && npm run build --prefix client",
+    "test": "npm test --prefix server",
+    "contracts:compile": "node scripts/compileContracts.js",
+    "contracts:deploy": "node scripts/deployRegistry.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "solc": "^0.8.24"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "ethers": "^6.17.0"
+  }
+}

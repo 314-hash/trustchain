@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production build artifacts
+dist/
+client/dist/
+server/dist/
+
+# Local Environment Secrets (never push private keys)
+.env
+.env.local
+.env.*.local
+
+# Database storage local files (data directory initialized on run)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# System & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
