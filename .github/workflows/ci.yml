@@ -36,3 +36,4 @@ jobs:
     - name: Build Full Stack Production Artifacts
       run: |
         npm run build
+

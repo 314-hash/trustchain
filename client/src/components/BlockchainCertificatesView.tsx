@@ -4,9 +4,13 @@ import { BlockchainCertificate } from '../types';
 
 interface BlockchainCertificatesViewProps {
   certificates: BlockchainCertificate[];
+  onSelectCertificate?: (certId: string) => void;
 }
 
-export const BlockchainCertificatesView: React.FC<BlockchainCertificatesViewProps> = ({ certificates }) => {
+export const BlockchainCertificatesView: React.FC<BlockchainCertificatesViewProps> = ({
+  certificates,
+  onSelectCertificate,
+}) => {
   const [certIdInput, setCertIdInput] = useState('');
   const [fileHashInput, setFileHashInput] = useState('');
   const [verifyResult, setVerifyResult] = useState<{
@@ -191,9 +195,13 @@ export const BlockchainCertificatesView: React.FC<BlockchainCertificatesViewProp
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
-                <span className="text-[11px] text-slate-500">
-                  Issued: {new Date(cert.issuedAt).toLocaleDateString()}
-                </span>
+                <button
+                  onClick={() => onSelectCertificate?.(cert.certificateId)}
+                  className="py-1 px-2.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold text-xs border border-amber-500/30 flex items-center gap-1 cursor-pointer transition-colors"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>Official Certificate</span>
+                </button>
                 <a
                   href={cert.explorerUrl}
                   target="_blank"

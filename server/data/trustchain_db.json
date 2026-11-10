@@ -1,6 +1,99 @@
 {
   "audits": [
     {
+      "id": "audit-1794295524447",
+      "auditNumber": "TC-AUD-STR-4467",
+      "projectName": "sm cinema",
+      "category": "streaming",
+      "targetUrlOrRepo": "sm.com",
+      "scope": [
+        "DRM Video Packaging",
+        "CDN Edge Signed Tokens",
+        "Content Rights Registry",
+        "S3 Master Storage Policies"
+      ],
+      "packageTier": "standard",
+      "status": "completed",
+      "score": 65,
+      "toolsUsed": [
+        "TrustChain MediaGuard v2.4",
+        "HLS/DASH Stream Probe",
+        "OWASP Streaming Security Checklist",
+        "RightsLedger Evidence Engine"
+      ],
+      "testsPerformed": [
+        "DRM Licensing & Key Exchange Configuration",
+        "CDN Signed URL & TTL Token Leakage Check",
+        "Territory & Geofence Enforcement Verification",
+        "Master Video S3 Bucket Permission Audit",
+        "License Documentation & Expiration Audit",
+        "Content File Hash Verification (SHA-256)"
+      ],
+      "findings": [
+        {
+          "id": "FIND-STR-02",
+          "title": "Streaming URL Token Expiration & Geo-fencing Enforcement",
+          "severity": "medium",
+          "affectedAsset": "/api/v1/stream/manifest",
+          "category": "Streaming API / Access Control",
+          "cweOrRef": "CWE-285",
+          "plainLanguageExplanation": "Video playback links must expire after a short time (e.g. 2 hours) and only work for the specific subscriber who requested them. Otherwise, paid stream links can be shared on chat forums.",
+          "technicalDetails": "CDN edge token signing (HMAC-SHA256 URL tokenization) must enforce short TTL (Time-To-Live), client IP binding, and geographic region restrictions according to distribution licensing contracts.",
+          "recommendation": "Configure Cloudflare Stream Token / AWS CloudFront Signed URLs with a maximum expiration of 60-120 minutes and enforce territory blocks at the edge.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-RIGHTS-EXP-mov-2",
+          "title": "Expired Content Distribution License: The Cyberpunk Chronicles: Neon Alley",
+          "severity": "high",
+          "affectedAsset": "Content Catalog / Title: The Cyberpunk Chronicles: Neon Alley",
+          "category": "Copyright & Content Licensing",
+          "cweOrRef": "Legal Compliance / Copyright Infringement",
+          "plainLanguageExplanation": "The distribution license for \"The Cyberpunk Chronicles: Neon Alley\" expired on 2026-06-30. Continuing to stream this title exposes the platform to copyright infringement claims.",
+          "technicalDetails": "Contract distribution terms ended. Platform streaming rights status must be transitioned to 'expired_license' and automated catalog deactivation triggered.",
+          "recommendation": "Delist the stream immediately or renew the licensing agreement with Synapse Media Tokyo.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-RIGHTS-EXP-mov-3",
+          "title": "Expired Content Distribution License: Sunset Over Venice (2022)",
+          "severity": "high",
+          "affectedAsset": "Content Catalog / Title: Sunset Over Venice (2022)",
+          "category": "Copyright & Content Licensing",
+          "cweOrRef": "Legal Compliance / Copyright Infringement",
+          "plainLanguageExplanation": "The distribution license for \"Sunset Over Venice (2022)\" expired on 2024-10-31. Continuing to stream this title exposes the platform to copyright infringement claims.",
+          "technicalDetails": "Contract distribution terms ended. Platform streaming rights status must be transitioned to 'expired_license' and automated catalog deactivation triggered.",
+          "recommendation": "Delist the stream immediately or renew the licensing agreement with Lumiere European Cinema.",
+          "resolved": false
+        }
+      ],
+      "summary": {
+        "critical": 0,
+        "high": 2,
+        "medium": 1,
+        "low": 0,
+        "informational": 0,
+        "executiveSummary": "Streaming platform audit identified 3 item(s) requiring attention, including stream protection and copyright licensing status.",
+        "keyRisks": [
+          "Streaming URL Token Expiration & Geo-fencing Enforcement",
+          "Expired Content Distribution License: The Cyberpunk Chronicles: Neon Alley",
+          "Expired Content Distribution License: Sunset Over Venice (2022)"
+        ],
+        "topRecommendations": [
+          "Configure Cloudflare Stream Token / AWS CloudFront Signed URLs with a maximum expiration of 60-120 minutes and enforce territory blocks at the edge.",
+          "Delist the stream immediately or renew the licensing agreement with Synapse Media Tokyo.",
+          "Delist the stream immediately or renew the licensing agreement with Lumiere European Cinema."
+        ]
+      },
+      "limitations": [
+        "Network-level scanning of public endpoints"
+      ],
+      "verificationStatus": "verified",
+      "createdAt": "2026-11-10T07:25:24.467Z",
+      "completedAt": "2026-11-10T07:25:24.467Z",
+      "associatedCertificateId": "TC-CERT-MWAD87DS-74C8"
+    },
+    {
       "id": "audit-001",
       "auditNumber": "TC-AUD-2026-001",
       "projectName": "CineChain Decentralized Streaming",
@@ -366,6 +459,22 @@
     }
   ],
   "certificates": [
+    {
+      "certificateId": "TC-CERT-MWAD87DS-74C8",
+      "title": "sm cinema Streaming Audit Attestation",
+      "entityType": "website_audit",
+      "entityId": "audit-1794295524447",
+      "sha256Hash": "1942e471f14d3a3b1c7b0549a31e98a901b1878825e0eb4bcd9a51abef30d17d",
+      "onChainStatus": "registered_onchain",
+      "txHash": "0x42e9840f645b303167d60b522ff0ff1c44f2209d616577494c0b15673b00b840",
+      "chainId": 8453,
+      "chainName": "Base (Coinbase L2)",
+      "blockNumber": 18082598,
+      "explorerUrl": "https://basescan.org/tx/0x42e9840f645b303167d60b522ff0ff1c44f2209d616577494c0b15673b00b840",
+      "issuer": "0x71C8354366A96C2522778B27bF13fF1A3d596495",
+      "issuedAt": "2026-11-10T07:25:24.460Z",
+      "publicVerificationUrl": "https://trustchain.audit/verify/TC-CERT-MWAD87DS-74C8"
+    },
     {
       "certificateId": "TC-CERT-STR-8401",
       "title": "CineChain Streaming Security & CDN Audit Certificate",

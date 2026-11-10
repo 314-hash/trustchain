@@ -160,7 +160,10 @@ export function App() {
           )}
 
           {currentTab === 'certificates' && (
-            <BlockchainCertificatesView certificates={certificates} />
+            <BlockchainCertificatesView
+              certificates={certificates}
+              onSelectCertificate={(id) => setPublicCertId(id)}
+            />
           )}
 
           {currentTab === 'ai-assistant' && (
