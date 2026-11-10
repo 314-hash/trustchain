@@ -8,6 +8,7 @@ import { StreamingAuditView } from './components/StreamingAuditView';
 import { PublishingAuditView } from './components/PublishingAuditView';
 import { SmartContractAuditView } from './components/SmartContractAuditView';
 import { WebSecurityAuditView } from './components/WebSecurityAuditView';
+import { TempestEngineView } from './components/TempestEngineView';
 import { RightsVerificationView } from './components/RightsVerificationView';
 import { BlockchainCertificatesView } from './components/BlockchainCertificatesView';
 import { AiAuditAssistantView } from './components/AiAuditAssistantView';
@@ -131,6 +132,10 @@ export function App() {
               onSelectAudit={handleSelectAudit}
               onStartAuditClick={() => setCurrentTab('wizard')}
             />
+          )}
+
+          {currentTab === 'tempest' && (
+            <TempestEngineView />
           )}
 
           {currentTab === 'streaming' && (

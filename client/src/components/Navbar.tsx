@@ -15,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
     overview: 'Executive Dashboard & Platform Health',
     wizard: 'Guided Audit Wizard (7-Step Flow)',
     'my-audits': 'Audit Records & Verification Vault',
+    tempest: 'TEMPEST Security Engine (T3MP3ST Multi-Agent Assessment)',
     streaming: 'Movie Streaming & HLS/DRM Security Audit',
     publishing: 'E-Book & Digital Publishing Verification Portal',
     'smart-contract': 'Smart Contract Audit Engine (Solidity / EVM)',

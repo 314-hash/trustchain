@@ -8,6 +8,13 @@ import { auditPublishingSubmission, calculateSha256 } from '../services/publishi
 import { auditWebsiteSecurity } from '../services/webSecurityAuditEngine.js';
 import { registerAuditCertificate, verifyEvidenceIntegrity } from '../services/blockchainRegistryService.js';
 import { generatePlainLanguageExplanation, generateExecutiveAuditBrief, askAiAssistantQuestion } from '../services/aiAssistantService.js';
+import {
+  requestTempestAssessment,
+  listAllMissions,
+  getMissionById,
+  abortMission,
+  retestFinding,
+} from '../services/tempestAdapter.js';
 import { AuditRecord, MovieRightsRecord } from '../types/audit.js';
 
 const router = Router();
@@ -531,6 +538,58 @@ router.get('/ai/executive-brief/:id', (req, res) => {
   }
   const brief = generateExecutiveAuditBrief(audit);
   res.json(brief);
+});
+
+// 11. T3MP3ST Security Intelligence Engine Endpoints
+router.post('/tempest/assess', async (req, res) => {
+  try {
+    const { assetType, target, profile, authorization, sourceCodeOrContract } = req.body;
+    if (!target) {
+      return res.status(400).json({ error: 'Target URL, domain, or address is required.' });
+    }
+    const mission = await requestTempestAssessment({
+      assetType: assetType || 'website',
+      target,
+      profile: profile || 'basic',
+      authorization: authorization || {
+        confirmedOwnership: true,
+        authorizedBy: 'Authorized Platform Operator',
+        approvedScope: [target],
+        rulesOfEngagement: 'Safe passive / non-destructive testing only',
+        targetEnvironment: 'staging',
+      },
+      sourceCodeOrContract,
+    });
+    res.json(mission);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message || 'T3MP3ST assessment failed.' });
+  }
+});
+
+router.get('/tempest/missions', (req, res) => {
+  res.json(listAllMissions());
+});
+
+router.get('/tempest/missions/:id', (req, res) => {
+  const mission = getMissionById(req.params.id);
+  if (!mission) {
+    return res.status(404).json({ error: 'T3MP3ST mission not found.' });
+  }
+  res.json(mission);
+});
+
+router.post('/tempest/abort/:id', (req, res) => {
+  const success = abortMission(req.params.id, req.body?.reason || 'Operator Stop');
+  res.json({ aborted: success, missionId: req.params.id });
+});
+
+router.post('/tempest/retest', (req, res) => {
+  const { missionId, findingId } = req.body;
+  if (!missionId || !findingId) {
+    return res.status(400).json({ error: 'missionId and findingId are required.' });
+  }
+  const result = retestFinding(missionId, findingId);
+  res.json(result);
 });
 
 export default router;

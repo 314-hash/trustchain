@@ -13,7 +13,8 @@ import {
   FileText,
   Users,
   Settings,
-  Sparkles
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, onS
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'wizard', label: 'Start New Audit', icon: Sparkles, highlight: true },
     { id: 'my-audits', label: 'My Audits', icon: FolderGit2 },
+    { id: 'tempest', label: 'TEMPEST Engine', icon: Zap, highlight: true },
     { id: 'streaming', label: 'Streaming Audit', icon: Tv },
     { id: 'publishing', label: 'Publishing Audit', icon: BookOpen },
     { id: 'smart-contract', label: 'Smart Contract Audit', icon: Code2 },

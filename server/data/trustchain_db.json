@@ -1,6 +1,297 @@
 {
   "audits": [
     {
+      "id": "audit-1794296691442",
+      "auditNumber": "TC-AUD-STR-1461",
+      "projectName": "youtube",
+      "category": "streaming",
+      "targetUrlOrRepo": "https://www.youtube.com/",
+      "scope": [
+        "DRM Video Packaging",
+        "CDN Edge Signed Tokens",
+        "Content Rights Registry",
+        "S3 Master Storage Policies"
+      ],
+      "packageTier": "standard",
+      "status": "completed",
+      "score": 65,
+      "toolsUsed": [
+        "TrustChain MediaGuard v2.4",
+        "HLS/DASH Stream Probe",
+        "OWASP Streaming Security Checklist",
+        "RightsLedger Evidence Engine"
+      ],
+      "testsPerformed": [
+        "DRM Licensing & Key Exchange Configuration",
+        "CDN Signed URL & TTL Token Leakage Check",
+        "Territory & Geofence Enforcement Verification",
+        "Master Video S3 Bucket Permission Audit",
+        "License Documentation & Expiration Audit",
+        "Content File Hash Verification (SHA-256)"
+      ],
+      "findings": [
+        {
+          "id": "FIND-STR-02",
+          "title": "Streaming URL Token Expiration & Geo-fencing Enforcement",
+          "severity": "medium",
+          "affectedAsset": "/api/v1/stream/manifest",
+          "category": "Streaming API / Access Control",
+          "cweOrRef": "CWE-285",
+          "plainLanguageExplanation": "Video playback links must expire after a short time (e.g. 2 hours) and only work for the specific subscriber who requested them. Otherwise, paid stream links can be shared on chat forums.",
+          "technicalDetails": "CDN edge token signing (HMAC-SHA256 URL tokenization) must enforce short TTL (Time-To-Live), client IP binding, and geographic region restrictions according to distribution licensing contracts.",
+          "recommendation": "Configure Cloudflare Stream Token / AWS CloudFront Signed URLs with a maximum expiration of 60-120 minutes and enforce territory blocks at the edge.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-RIGHTS-EXP-mov-2",
+          "title": "Expired Content Distribution License: The Cyberpunk Chronicles: Neon Alley",
+          "severity": "high",
+          "affectedAsset": "Content Catalog / Title: The Cyberpunk Chronicles: Neon Alley",
+          "category": "Copyright & Content Licensing",
+          "cweOrRef": "Legal Compliance / Copyright Infringement",
+          "plainLanguageExplanation": "The distribution license for \"The Cyberpunk Chronicles: Neon Alley\" expired on 2026-06-30. Continuing to stream this title exposes the platform to copyright infringement claims.",
+          "technicalDetails": "Contract distribution terms ended. Platform streaming rights status must be transitioned to 'expired_license' and automated catalog deactivation triggered.",
+          "recommendation": "Delist the stream immediately or renew the licensing agreement with Synapse Media Tokyo.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-RIGHTS-EXP-mov-3",
+          "title": "Expired Content Distribution License: Sunset Over Venice (2022)",
+          "severity": "high",
+          "affectedAsset": "Content Catalog / Title: Sunset Over Venice (2022)",
+          "category": "Copyright & Content Licensing",
+          "cweOrRef": "Legal Compliance / Copyright Infringement",
+          "plainLanguageExplanation": "The distribution license for \"Sunset Over Venice (2022)\" expired on 2024-10-31. Continuing to stream this title exposes the platform to copyright infringement claims.",
+          "technicalDetails": "Contract distribution terms ended. Platform streaming rights status must be transitioned to 'expired_license' and automated catalog deactivation triggered.",
+          "recommendation": "Delist the stream immediately or renew the licensing agreement with Lumiere European Cinema.",
+          "resolved": false
+        }
+      ],
+      "summary": {
+        "critical": 0,
+        "high": 2,
+        "medium": 1,
+        "low": 0,
+        "informational": 0,
+        "executiveSummary": "Streaming platform audit identified 3 item(s) requiring attention, including stream protection and copyright licensing status.",
+        "keyRisks": [
+          "Streaming URL Token Expiration & Geo-fencing Enforcement",
+          "Expired Content Distribution License: The Cyberpunk Chronicles: Neon Alley",
+          "Expired Content Distribution License: Sunset Over Venice (2022)"
+        ],
+        "topRecommendations": [
+          "Configure Cloudflare Stream Token / AWS CloudFront Signed URLs with a maximum expiration of 60-120 minutes and enforce territory blocks at the edge.",
+          "Delist the stream immediately or renew the licensing agreement with Synapse Media Tokyo.",
+          "Delist the stream immediately or renew the licensing agreement with Lumiere European Cinema."
+        ]
+      },
+      "limitations": [
+        "Network-level scanning of public endpoints"
+      ],
+      "verificationStatus": "verified",
+      "createdAt": "2026-11-10T07:44:51.461Z",
+      "completedAt": "2026-11-10T07:44:51.461Z",
+      "associatedCertificateId": "TC-CERT-MWADX7UB-45E5"
+    },
+    {
+      "id": "audit-1794296146455",
+      "auditNumber": "TC-AUD-WEB-6458",
+      "projectName": "trustchain",
+      "category": "website_security",
+      "targetUrlOrRepo": "https://trust-chain-tau.vercel.app/",
+      "scope": [
+        "TLS / SSL Protocol Check",
+        "HTTP Response Headers (CSP, HSTS)",
+        "Information Leakage"
+      ],
+      "packageTier": "standard",
+      "status": "completed",
+      "score": 66,
+      "toolsUsed": [
+        "TrustChain SafeScan Engine",
+        "OWASP ZAP 2.14 Adapter (Passive Engine)",
+        "TLS Cipher Suite Inspector",
+        "HTTP Security Header Validator"
+      ],
+      "testsPerformed": [
+        "TLS Certificate & Encryption Suite Verification",
+        "HTTP Security Response Headers Audit (CSP, HSTS, XFO, XCTO)",
+        "Server Information Disclosure Audit",
+        "CORS Access-Control-Allow-Origin Configuration",
+        "Passive OWASP Top 10 Surface Scan (Safe & Non-Destructive)"
+      ],
+      "findings": [
+        {
+          "id": "FIND-WEB-CSP",
+          "title": "Missing Content-Security-Policy (CSP) Header",
+          "severity": "high",
+          "affectedAsset": "HTTP Response Headers",
+          "category": "Web Application Security / XSS Defense",
+          "cweOrRef": "CWE-1021 / CWE-79",
+          "plainLanguageExplanation": "Your website lacks a security policy that specifies which scripts are allowed to run. If an attacker injects malicious JavaScript, the browser will execute it without warning.",
+          "technicalDetails": "No Content-Security-Policy header detected in response headers. Susceptible to Cross-Site Scripting (XSS) and malicious script injection.",
+          "recommendation": "Define a strict Content-Security-Policy header restricting script-src, object-src, and frame-ancestors.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-WEB-XFO",
+          "title": "Missing Clickjacking Protection (X-Frame-Options)",
+          "severity": "medium",
+          "affectedAsset": "HTTP Response Headers",
+          "category": "Web Application Security / Clickjacking",
+          "cweOrRef": "CWE-1021",
+          "plainLanguageExplanation": "Other websites can embed your login or checkout page inside an invisible frame, tricking users into clicking buttons they did not intend to click.",
+          "technicalDetails": "Missing X-Frame-Options: DENY or SAMEORIGIN directive.",
+          "recommendation": "Add header: X-Frame-Options: SAMEORIGIN.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-WEB-LEAK",
+          "title": "Server Technology Banner Disclosure",
+          "severity": "low",
+          "affectedAsset": "HTTP Headers (Server / X-Powered-By)",
+          "category": "Information Disclosure",
+          "cweOrRef": "CWE-200",
+          "plainLanguageExplanation": "Your server is broadcasting the exact software version it runs (Vercel). This helps attackers search for known exploits for that exact version.",
+          "technicalDetails": "Server or X-Powered-By header reveals backend technology fingerprint.",
+          "recommendation": "Disable Server tokens in Nginx/Apache configuration and call app.disable(\"x-powered-by\") in Express.",
+          "resolved": false,
+          "evidenceSnippet": "Server: Vercel, X-Powered-By: N/A"
+        },
+        {
+          "id": "FIND-WEB-MIME",
+          "title": "Missing X-Content-Type-Options Header",
+          "severity": "low",
+          "affectedAsset": "HTTP Response Headers",
+          "category": "MIME Sniffing Protection",
+          "cweOrRef": "CWE-16",
+          "plainLanguageExplanation": "Browsers may try to guess the file type instead of obeying the header, which can allow an uploaded text or image file to execute as JavaScript.",
+          "technicalDetails": "Missing X-Content-Type-Options: nosniff header.",
+          "recommendation": "Set X-Content-Type-Options: nosniff.",
+          "resolved": false
+        }
+      ],
+      "summary": {
+        "critical": 0,
+        "high": 1,
+        "medium": 1,
+        "low": 2,
+        "informational": 0,
+        "executiveSummary": "Website security audit completed for https://trust-chain-tau.vercel.app/.",
+        "keyRisks": [
+          "Missing Content-Security-Policy (CSP) Header",
+          "Missing Clickjacking Protection (X-Frame-Options)",
+          "Server Technology Banner Disclosure",
+          "Missing X-Content-Type-Options Header"
+        ],
+        "topRecommendations": [
+          "Define a strict Content-Security-Policy header restricting script-src, object-src, and frame-ancestors.",
+          "Add header: X-Frame-Options: SAMEORIGIN.",
+          "Disable Server tokens in Nginx/Apache configuration and call app.disable(\"x-powered-by\") in Express.",
+          "Set X-Content-Type-Options: nosniff."
+        ]
+      },
+      "limitations": [
+        "Safe non-destructive scan"
+      ],
+      "verificationStatus": "verified",
+      "createdAt": "2026-11-10T07:35:46.459Z",
+      "completedAt": "2026-11-10T07:35:46.459Z",
+      "associatedCertificateId": "TC-CERT-MWADLJBS-1486"
+    },
+    {
+      "id": "audit-1794295875281",
+      "auditNumber": "TC-AUD-WEB-5285",
+      "projectName": "pisochain",
+      "category": "website_security",
+      "targetUrlOrRepo": "https://pisochain.com/",
+      "scope": [
+        "TLS / SSL Protocol Check",
+        "HTTP Response Headers (CSP, HSTS)",
+        "Information Leakage"
+      ],
+      "packageTier": "standard",
+      "status": "completed",
+      "score": 70,
+      "toolsUsed": [
+        "TrustChain SafeScan Engine",
+        "OWASP ZAP 2.14 Adapter (Passive Engine)",
+        "TLS Cipher Suite Inspector",
+        "HTTP Security Header Validator"
+      ],
+      "testsPerformed": [
+        "TLS Certificate & Encryption Suite Verification",
+        "HTTP Security Response Headers Audit (CSP, HSTS, XFO, XCTO)",
+        "Server Information Disclosure Audit",
+        "CORS Access-Control-Allow-Origin Configuration",
+        "Passive OWASP Top 10 Surface Scan (Safe & Non-Destructive)"
+      ],
+      "findings": [
+        {
+          "id": "FIND-WEB-CSP",
+          "title": "Missing Content-Security-Policy (CSP) Header",
+          "severity": "high",
+          "affectedAsset": "HTTP Response Headers",
+          "category": "Web Application Security / XSS Defense",
+          "cweOrRef": "CWE-1021 / CWE-79",
+          "plainLanguageExplanation": "Your website lacks a security policy that specifies which scripts are allowed to run. If an attacker injects malicious JavaScript, the browser will execute it without warning.",
+          "technicalDetails": "No Content-Security-Policy header detected in response headers. Susceptible to Cross-Site Scripting (XSS) and malicious script injection.",
+          "recommendation": "Define a strict Content-Security-Policy header restricting script-src, object-src, and frame-ancestors.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-WEB-XFO",
+          "title": "Missing Clickjacking Protection (X-Frame-Options)",
+          "severity": "medium",
+          "affectedAsset": "HTTP Response Headers",
+          "category": "Web Application Security / Clickjacking",
+          "cweOrRef": "CWE-1021",
+          "plainLanguageExplanation": "Other websites can embed your login or checkout page inside an invisible frame, tricking users into clicking buttons they did not intend to click.",
+          "technicalDetails": "Missing X-Frame-Options: DENY or SAMEORIGIN directive.",
+          "recommendation": "Add header: X-Frame-Options: SAMEORIGIN.",
+          "resolved": false
+        },
+        {
+          "id": "FIND-WEB-LEAK",
+          "title": "Server Technology Banner Disclosure",
+          "severity": "low",
+          "affectedAsset": "HTTP Headers (Server / X-Powered-By)",
+          "category": "Information Disclosure",
+          "cweOrRef": "CWE-200",
+          "plainLanguageExplanation": "Your server is broadcasting the exact software version it runs (cloudflare). This helps attackers search for known exploits for that exact version.",
+          "technicalDetails": "Server or X-Powered-By header reveals backend technology fingerprint.",
+          "recommendation": "Disable Server tokens in Nginx/Apache configuration and call app.disable(\"x-powered-by\") in Express.",
+          "resolved": false,
+          "evidenceSnippet": "Server: cloudflare, X-Powered-By: N/A"
+        }
+      ],
+      "summary": {
+        "critical": 0,
+        "high": 1,
+        "medium": 1,
+        "low": 1,
+        "informational": 0,
+        "executiveSummary": "Website security audit completed for https://pisochain.com/.",
+        "keyRisks": [
+          "Missing Content-Security-Policy (CSP) Header",
+          "Missing Clickjacking Protection (X-Frame-Options)",
+          "Server Technology Banner Disclosure"
+        ],
+        "topRecommendations": [
+          "Define a strict Content-Security-Policy header restricting script-src, object-src, and frame-ancestors.",
+          "Add header: X-Frame-Options: SAMEORIGIN.",
+          "Disable Server tokens in Nginx/Apache configuration and call app.disable(\"x-powered-by\") in Express."
+        ]
+      },
+      "limitations": [
+        "Safe non-destructive scan"
+      ],
+      "verificationStatus": "verified",
+      "createdAt": "2026-11-10T07:31:15.285Z",
+      "completedAt": "2026-11-10T07:31:15.285Z",
+      "associatedCertificateId": "TC-CERT-MWADFQ36-D960"
+    },
+    {
       "id": "audit-1794295524447",
       "auditNumber": "TC-AUD-STR-4467",
       "projectName": "sm cinema",
@@ -348,6 +639,52 @@
   ],
   "movieRights": [
     {
+      "id": "mov-1794297240173",
+      "title": "wewe",
+      "productionCompany": "wewe prod",
+      "director": "Miguel Santos",
+      "contentOwnerDeclaration": "I, Miguel Santos, acting as the authorized representative of Horizon Pictures Studios Inc., declare that our company owns or is legally authorized to manage the intellectual property rights of the movie The Last Horizon. I confirm that all submitted information is accurate and supported by appropriate documentation.",
+      "licenseDocs": [
+        "signed_distribution_contract.pdf"
+      ],
+      "distributionAgreement": "Exclusive digital streaming distribution agreement granted to DigitalWave Entertainment Inc. for authorized online streaming platforms. The agreement allows commercial streaming and digital distribution.",
+      "licenseExpirationDate": "2029-12-29",
+      "territoryRestrictions": [
+        "Authorized Territories: Philippines",
+        "Singapore",
+        "Malaysia"
+      ],
+      "streamingRights": "Video-on-Demand (VOD): Authorized    Subscription Video-on-Demand (SVOD): Authorized    Advertising-Supported Video-on-Demand (AVOD): Not Authorized    Live Streaming: Not Authorized    Offline Downloads: Authorized",
+      "revenueSharingTerms": "75% Content Owner / 25% Platform",
+      "contentFileHash": "92122a8f38a35565e508ae455eb22b334136cbeb13ffe186540d6f5c3af2cea0",
+      "rightsStatus": "evidence_checked",
+      "statusNotes": "All required contracts, territorial rights declarations, and distributor signatures have been checked. Cryptographic content hash anchored.",
+      "updatedAt": "2026-11-10T07:54:00.178Z"
+    },
+    {
+      "id": "mov-1794297184290",
+      "title": "The Last Horizon",
+      "productionCompany": "Horizon Pictures Studios Inc.",
+      "director": "Miguel Santos",
+      "contentOwnerDeclaration": "I, Miguel Santos, acting as the authorized representative of Horizon Pictures Studios Inc., declare that our company owns or is legally authorized to manage the intellectual property rights of the movie The Last Horizon. I confirm that all submitted information is accurate and supported by appropriate documentation.",
+      "licenseDocs": [
+        "signed_distribution_contract.pdf"
+      ],
+      "distributionAgreement": "Exclusive digital streaming distribution agreement granted to DigitalWave Entertainment Inc. for authorized online streaming platforms. The agreement allows commercial streaming and digital distribution.",
+      "licenseExpirationDate": "2029-12-29",
+      "territoryRestrictions": [
+        "Authorized Territories: Philippines",
+        "Singapore",
+        "Malaysia"
+      ],
+      "streamingRights": "Video-on-Demand (VOD): Authorized    Subscription Video-on-Demand (SVOD): Authorized    Advertising-Supported Video-on-Demand (AVOD): Not Authorized    Live Streaming: Not Authorized    Offline Downloads: Authorized",
+      "revenueSharingTerms": "75% Content Owner / 25% Platform",
+      "contentFileHash": "a3f5c8d92e1b7046f8a9c3d5e7b1024a6c8d0e2f4b6a8c1d3e5f7092a4b6c8d0",
+      "rightsStatus": "evidence_checked",
+      "statusNotes": "All required contracts, territorial rights declarations, and distributor signatures have been checked. Cryptographic content hash anchored.",
+      "updatedAt": "2026-11-10T07:53:04.290Z"
+    },
+    {
       "id": "mov-1",
       "title": "Quantum Horizon (2025)",
       "productionCompany": "Aetherion Cinematic Studios LLC",
@@ -459,6 +796,54 @@
     }
   ],
   "certificates": [
+    {
+      "certificateId": "TC-CERT-MWADX7UB-45E5",
+      "title": "youtube Streaming Audit Attestation",
+      "entityType": "website_audit",
+      "entityId": "audit-1794296691442",
+      "sha256Hash": "33fe6a4b9d7cf5b5a2601d2f5b4bb37debb16a9e3e63d15f6ce608bfc3677320",
+      "onChainStatus": "registered_onchain",
+      "txHash": "0x7ae077711be7e4fd5e5a386904de56d2af440f36e53408fe13ba961cabc0fe1d",
+      "chainId": 8453,
+      "chainName": "Base (Coinbase L2)",
+      "blockNumber": 18487636,
+      "explorerUrl": "https://basescan.org/tx/0x7ae077711be7e4fd5e5a386904de56d2af440f36e53408fe13ba961cabc0fe1d",
+      "issuer": "0x71C8354366A96C2522778B27bF13fF1A3d596495",
+      "issuedAt": "2026-11-10T07:44:51.453Z",
+      "publicVerificationUrl": "https://trustchain.audit/verify/TC-CERT-MWADX7UB-45E5"
+    },
+    {
+      "certificateId": "TC-CERT-MWADLJBS-1486",
+      "title": "trustchain Web Security Attestation",
+      "entityType": "website_audit",
+      "entityId": "audit-1794296146455",
+      "sha256Hash": "bebdcd23fe94504bb1eb550ba5460baf9b34e07f687da4a43a3b3b8342fda7a0",
+      "onChainStatus": "registered_onchain",
+      "txHash": "0x1564d0e835d35f33b9424a46c1c67fa7bc5a2d25fd70e45aaccf197be914e61b",
+      "chainId": 8453,
+      "chainName": "Base (Coinbase L2)",
+      "blockNumber": 18136291,
+      "explorerUrl": "https://basescan.org/tx/0x1564d0e835d35f33b9424a46c1c67fa7bc5a2d25fd70e45aaccf197be914e61b",
+      "issuer": "0x71C8354366A96C2522778B27bF13fF1A3d596495",
+      "issuedAt": "2026-11-10T07:35:46.456Z",
+      "publicVerificationUrl": "https://trustchain.audit/verify/TC-CERT-MWADLJBS-1486"
+    },
+    {
+      "certificateId": "TC-CERT-MWADFQ36-D960",
+      "title": "pisochain Web Security Attestation",
+      "entityType": "website_audit",
+      "entityId": "audit-1794295875281",
+      "sha256Hash": "705682188d614e40953d4fae29c6f2de95ebefd9d2556cda39ff6f800afcae84",
+      "onChainStatus": "registered_onchain",
+      "txHash": "0xabb2779fcbcd5edd28f843e29c546400546dd90bf84c7e8436924a58e8fa07ca",
+      "chainId": 8453,
+      "chainName": "Base (Coinbase L2)",
+      "blockNumber": 18324737,
+      "explorerUrl": "https://basescan.org/tx/0xabb2779fcbcd5edd28f843e29c546400546dd90bf84c7e8436924a58e8fa07ca",
+      "issuer": "0x71C8354366A96C2522778B27bF13fF1A3d596495",
+      "issuedAt": "2026-11-10T07:31:15.282Z",
+      "publicVerificationUrl": "https://trustchain.audit/verify/TC-CERT-MWADFQ36-D960"
+    },
     {
       "certificateId": "TC-CERT-MWAD87DS-74C8",
       "title": "sm cinema Streaming Audit Attestation",

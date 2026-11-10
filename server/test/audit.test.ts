@@ -5,6 +5,12 @@ import { auditStreamingPlatform, evaluateMovieRightsStatus } from '../src/servic
 import { validateISBN, auditPublishingSubmission, calculateSha256 } from '../src/services/publishingAuditEngine.js';
 import { registerAuditCertificate, verifyEvidenceIntegrity } from '../src/services/blockchainRegistryService.js';
 import { generatePlainLanguageExplanation, askAiAssistantQuestion } from '../src/services/aiAssistantService.js';
+import {
+  requestTempestAssessment,
+  redactSensitiveData,
+  retestFinding,
+  abortMission,
+} from '../src/services/tempestAdapter.js';
 
 test('Smart Contract Engine detects reentrancy and tx.origin vulnerabilities', () => {
   const vulnerableSolidity = `
@@ -137,4 +143,101 @@ test('AI Assistant provides grounded plain-language explanations', () => {
 
   const answer = askAiAssistantQuestion('What is a reentrancy attack?', []);
   assert.ok(answer.toLowerCase().includes('reentrancy'));
+});
+
+test('T3MP3ST Adapter enforces mandatory authorization and safety gates', async () => {
+  // Test 1: Reject wildcard targets
+  await assert.rejects(
+    async () => {
+      await requestTempestAssessment({
+        assetType: 'website',
+        target: '*',
+        profile: 'basic',
+        authorization: {
+          confirmedOwnership: true,
+          authorizedBy: 'Operator',
+          approvedScope: ['*'],
+          rulesOfEngagement: 'Testing',
+          targetEnvironment: 'staging',
+        },
+      });
+    },
+    /Wildcard target authorization/
+  );
+
+  // Test 2: Reject unconfirmed ownership
+  await assert.rejects(
+    async () => {
+      await requestTempestAssessment({
+        assetType: 'website',
+        target: 'https://unauthorized-target.com',
+        profile: 'basic',
+        authorization: {
+          confirmedOwnership: false,
+          authorizedBy: 'Operator',
+          approvedScope: [],
+          rulesOfEngagement: '',
+          targetEnvironment: 'production',
+        },
+      });
+    },
+    /AUTHORIZATION REQUIRED/
+  );
+
+  // Test 3: Reject active advanced profile on production
+  await assert.rejects(
+    async () => {
+      await requestTempestAssessment({
+        assetType: 'website',
+        target: 'https://production-target.com',
+        profile: 'advanced',
+        authorization: {
+          confirmedOwnership: true,
+          authorizedBy: 'Operator',
+          approvedScope: ['https://production-target.com'],
+          rulesOfEngagement: 'Active',
+          targetEnvironment: 'production',
+        },
+      });
+    },
+    /prohibited against live production/
+  );
+});
+
+test('T3MP3ST Adapter performs safe assessment, redacts secrets, and retests findings', async () => {
+  // Secret redaction verification
+  const dirtyLog = 'Auth header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.supersecrettoken API_KEY: ak_live_981247192847192847';
+  const scrubbed = redactSensitiveData(dirtyLog);
+  assert.ok(!scrubbed.includes('supersecrettoken'));
+  assert.ok(!scrubbed.includes('ak_live_981247192847192847'));
+  assert.ok(scrubbed.includes('[REDACTED_BEARER_TOKEN]'));
+
+  // Run authorized assessment on staging
+  const mission = await requestTempestAssessment({
+    assetType: 'streaming_platform',
+    target: 'http://staging.stream.cineflix.io',
+    profile: 'standard',
+    authorization: {
+      confirmedOwnership: true,
+      authorizedBy: 'Chief Security Officer',
+      approvedScope: ['http://staging.stream.cineflix.io'],
+      rulesOfEngagement: 'Safe, non-destructive streaming audit',
+      targetEnvironment: 'staging',
+    },
+  });
+
+  assert.equal(mission.status, 'completed');
+  assert.ok(mission.findings.length > 0);
+  assert.ok(mission.safetyAuditLog.length >= 4);
+
+  // Verify finding has reproducible evidence & tool version
+  const finding = mission.findings[0];
+  assert.ok(finding.tool.includes('T3MP3ST'));
+  assert.ok(finding.evidence.length > 0);
+  assert.equal(finding.retestStatus, 'untested');
+
+  // Retest verification
+  const retestResult = retestFinding(mission.missionId, finding.id);
+  assert.equal(retestResult.retested, true);
+  assert.equal(retestResult.status, 'verified_repaired');
 });
