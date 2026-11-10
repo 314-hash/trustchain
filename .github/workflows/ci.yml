@@ -1,0 +1,38 @@
+name: TrustChain CI / Verification
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm install
+        cd server && npm install
+        cd ../client && npm install
+
+    - name: Run Test Suite
+      run: |
+        cd server && npx tsx --test test/audit.test.ts
+
+    - name: Compile Smart Contracts
+      run: |
+        node scripts/compileContracts.js
+
+    - name: Build Full Stack Production Artifacts
+      run: |
+        npm run build

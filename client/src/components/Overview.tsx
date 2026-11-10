@@ -54,15 +54,15 @@ export const Overview: React.FC<OverviewProps> = ({
 
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>TrustChain Security Intelligence Platform</span>
+              <span>100% Free Public Verification Platform</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
               Verify the Platform. <span className="text-[#f59e0b]">Protect the Content.</span> Prove the Records.
             </h1>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Unified blockchain audit and provenance engine for movie streaming networks, digital e-book publishers, and Web3 smart contracts.
+              Open public blockchain audit and provenance engine for movie streaming networks, digital e-book publishers, and Web3 smart contracts. Completely free for community and creator use.
             </p>
           </div>
 

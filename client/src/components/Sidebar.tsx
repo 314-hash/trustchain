@@ -6,6 +6,7 @@ import {
   Tv,
   BookOpen,
   Code2,
+  Globe,
   FileCheck2,
   Award,
   Bot,
@@ -29,6 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, onS
     { id: 'streaming', label: 'Streaming Audit', icon: Tv },
     { id: 'publishing', label: 'Publishing Audit', icon: BookOpen },
     { id: 'smart-contract', label: 'Smart Contract Audit', icon: Code2 },
+    { id: 'web-security', label: 'Web Security Audit', icon: Globe },
     { id: 'rights', label: 'Rights Verification', icon: FileCheck2 },
     { id: 'certificates', label: 'Blockchain Certificates', icon: Award },
     { id: 'ai-assistant', label: 'AI Audit Assistant', icon: Bot },
@@ -105,9 +107,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, onS
           </span>
           <span className="text-amber-400 font-mono text-[10px] font-bold">Base L2 (8453)</span>
         </div>
-        <p className="text-[10px] text-slate-500 truncate">Off-chain Vault: Enforced</p>
+        <div className="flex items-center justify-between text-[10px]">
+          <span className="text-slate-500">Off-chain Vault: Enforced</span>
+          <span className="text-emerald-400 font-bold">100% Free Public</span>
+        </div>
       </div>
     </aside>
   );
 };
-

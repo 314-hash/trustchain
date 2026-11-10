@@ -18,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
     streaming: 'Movie Streaming & HLS/DRM Security Audit',
     publishing: 'E-Book & Digital Publishing Verification Portal',
     'smart-contract': 'Smart Contract Audit Engine (Solidity / EVM)',
+    'web-security': 'Website & API Security Audit (OWASP / TLS Hardening)',
     rights: 'Movie Rights & Distribution Ledger',
     certificates: 'Tamper-Evident Blockchain Evidence Registry',
     'ai-assistant': 'AI Audit Assistant (Plain-Language Explanations)',
@@ -55,6 +56,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Free Public Access Pill */}
+        <div className="hidden lg:flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-[11px] text-emerald-400 font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Free Public Use &bull; Zero Gas</span>
+        </div>
+
         {/* Network Badge */}
         <div className="hidden md:flex items-center gap-2 bg-[#131b2e] border border-[#232f45] px-3 py-1.5 rounded-lg text-xs text-slate-300">
           <span className="w-2 h-2 rounded-full bg-amber-400"></span>

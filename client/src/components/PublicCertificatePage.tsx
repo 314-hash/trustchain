@@ -254,3 +254,4 @@ export const PublicCertificatePage: React.FC<PublicCertificatePageProps> = ({
     </div>
   );
 };
+

@@ -87,23 +87,23 @@ export const AuditWizard: React.FC<AuditWizardProps> = ({ onAuditCompleted, onGo
     },
   ];
 
-  // Step 5 Packages
+  // Step 5 Packages (100% Free Public Use)
   const packages = [
     {
       id: 'basic',
-      name: 'Starter Verification',
-      price: '$299 / scan',
-      description: 'Automated static scans, basic security headers, and off-chain hash generation.',
-      features: ['Automated AST Code Scan', 'Security Header Checks', 'Basic PDF Report', 'Standard Evidence Hash'],
+      name: 'Community Open Scan',
+      price: '$0 / Free',
+      description: 'Instant static analysis, security headers, and zero-knowledge evidence hashing.',
+      features: ['Automated AST Code Scan', 'Security Header Checks', 'Instant Downloadable PDF Report', 'Standard SHA-256 Evidence Hash'],
     },
     {
       id: 'standard',
-      name: 'Professional Audit',
-      price: '$999 / scan',
+      name: 'Open Public Audit',
+      price: '$0 / Free',
       popular: true,
       description: 'Comprehensive vulnerability audit, copyright check, and Base L2 blockchain certificate.',
       features: [
-        'Everything in Starter',
+        'Everything in Community',
         'Deep Access Control & Reentrancy Sweep',
         'DRM & Stream CDN Verification',
         'Base L2 Blockchain Certificate Registration',
@@ -112,15 +112,15 @@ export const AuditWizard: React.FC<AuditWizardProps> = ({ onAuditCompleted, onGo
     },
     {
       id: 'enterprise',
-      name: 'Enterprise Certified',
-      price: '$2,499 / scan',
-      description: 'Full-spectrum audit, multi-territory license audit, and independent auditor sign-off.',
+      name: 'Institutional Commons',
+      price: '$0 / Free',
+      description: 'Full-spectrum audit, multi-territory license audit, and immutable public registry attestation.',
       features: [
-        'Everything in Professional',
+        'Everything in Open Public',
         'Multi-Territory Rights Verification',
-        'S3 & Storage Permission Audit',
-        'Dedicated Security Architect Review',
-        'Continuous Retesting for 90 Days',
+        'S3 Master Video Storage Audit',
+        'Public Verification URL & QR Attestation',
+        'Unlimited Continuous Re-audits',
       ],
     },
   ];
@@ -564,9 +564,12 @@ export const AuditWizard: React.FC<AuditWizardProps> = ({ onAuditCompleted, onGo
       {currentStep === 5 && (
         <div className="bg-[#111726] border border-[#1e293b] rounded-xl p-6 shadow-xl space-y-4">
           <div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold font-mono uppercase mb-1">
+              <CheckCircle2 className="w-3 h-3" /> 100% Free Public Infrastructure
+            </div>
             <h3 className="text-lg font-bold text-white">STEP 5: Select an audit package</h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Choose the depth of automated verification, reporting, and on-chain certification required.
+              All tiers are 100% free for community and public use. No payment, credit card, or gas fees required.
             </p>
           </div>
 

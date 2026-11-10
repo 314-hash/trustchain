@@ -1,11 +1,12 @@
 # TRUSTCHAIN AUDIT
-### Non-Technical Blockchain Audit Platform for Streaming & Digital Publishing
+### Free Public Blockchain Audit & Content Provenance Platform for Streaming & Digital Publishing
 
 > **"Verify the Platform. Protect the Content. Prove the Records."**
+> **100% Free Public Community Infrastructure &bull; Zero Paywalls &bull; Zero Gas Fees**
 
 ![TrustChain Audit Platform](/client/public/logo.jpg)
 
-TRUSTCHAIN AUDIT is a unified SaaS platform designed to make professional cybersecurity, smart contract auditing, video streaming protection, and digital publishing provenance accessible to non-technical founders, film producers, and book authors.
+TRUSTCHAIN AUDIT is a unified public verification platform designed to make professional cybersecurity, smart contract auditing, video streaming protection, and digital publishing provenance accessible to everyone for free. No credit card, no crypto wallet, and no terminal experience required.
 
 ---
 

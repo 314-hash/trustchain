@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "tsc && node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "test": "node --test"
+    "test": "tsx --test test/audit.test.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

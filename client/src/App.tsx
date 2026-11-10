@@ -7,12 +7,14 @@ import { MyAudits } from './components/MyAudits';
 import { StreamingAuditView } from './components/StreamingAuditView';
 import { PublishingAuditView } from './components/PublishingAuditView';
 import { SmartContractAuditView } from './components/SmartContractAuditView';
+import { WebSecurityAuditView } from './components/WebSecurityAuditView';
 import { RightsVerificationView } from './components/RightsVerificationView';
 import { BlockchainCertificatesView } from './components/BlockchainCertificatesView';
 import { AiAuditAssistantView } from './components/AiAuditAssistantView';
 import { ReportsView } from './components/ReportsView';
 import { TeamManagementView } from './components/TeamManagementView';
 import { SettingsView } from './components/SettingsView';
+import { PublicCertificatePage } from './components/PublicCertificatePage';
 import { AuditRecord, BlockchainCertificate, MovieRightsRecord, PublishingRecord } from './types';
 
 export function App() {
@@ -22,6 +24,7 @@ export function App() {
   const [movieRights, setMovieRights] = useState<MovieRightsRecord[]>([]);
   const [publishingRecords, setPublishingRecords] = useState<PublishingRecord[]>([]);
   const [selectedAuditId, setSelectedAuditId] = useState<string | null>(null);
+  const [publicCertId, setPublicCertId] = useState<string | null>(null);
 
   // Fetch initial seed data from backend
   const loadPlatformData = async () => {
@@ -44,6 +47,13 @@ export function App() {
 
   useEffect(() => {
     loadPlatformData();
+
+    // Support URL param e.g. ?verify=TC-CERT-PUB-9912
+    const params = new URLSearchParams(window.location.search);
+    const verifyId = params.get('verify') || params.get('cert');
+    if (verifyId) {
+      setPublicCertId(verifyId);
+    }
   }, []);
 
   const handleAuditCompleted = (newAudit: AuditRecord) => {
@@ -65,9 +75,19 @@ export function App() {
     setMovieRights((prev) => [record, ...prev]);
   };
 
+  // If viewing a standalone public certificate
+  if (publicCertId) {
+    return (
+      <PublicCertificatePage
+        certificateId={publicCertId}
+        onBack={() => setPublicCertId(null)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0d14] text-slate-100 flex">
-      {/* 12-Item Sidebar */}
+      {/* 13-Item Sidebar */}
       <Sidebar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -126,6 +146,10 @@ export function App() {
 
           {currentTab === 'smart-contract' && (
             <SmartContractAuditView onAuditCompleted={handleAuditCompleted} />
+          )}
+
+          {currentTab === 'web-security' && (
+            <WebSecurityAuditView onAuditCompleted={handleAuditCompleted} />
           )}
 
           {currentTab === 'rights' && (
