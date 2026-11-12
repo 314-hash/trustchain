@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { db } from '../src/services/db.js';
 import { analyzeSmartContract } from '../src/services/smartContractAuditEngine.js';
 import { auditStreamingPlatform, evaluateMovieRightsStatus } from '../src/services/streamingAuditEngine.js';
 import { validateISBN, auditPublishingSubmission, calculateSha256 } from '../src/services/publishingAuditEngine.js';
@@ -240,4 +241,56 @@ test('T3MP3ST Adapter performs safe assessment, redacts secrets, and retests fin
   const retestResult = retestFinding(mission.missionId, finding.id);
   assert.equal(retestResult.retested, true);
   assert.equal(retestResult.status, 'verified_repaired');
+});
+
+test('BIR Tax Auditor Module validates assigned auditor passcode and burns it on first use', () => {
+  // 1. Provision a test single-use passcode
+  const testSession = {
+    sessionId: `TEST-BIR-SESS-${Date.now()}`,
+    passcode: `BIR-2026-TEST-${Math.floor(1000 + Math.random() * 9000)}`,
+    auditorName: 'Atty. Test Auditor',
+    auditorBirId: 'BIR-RDO033-99999',
+    rdoCode: 'RDO 033 - Large Taxpayers Regular Audit Division',
+    assignedPlatform: 'CineChain Streaming Ltd.',
+    platformTin: '009-842-192-000',
+    expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+    isUsed: false,
+    status: 'ACTIVE_UNUSED' as const,
+  };
+
+  db.createBirSession(testSession);
+
+  // 2. First validation: should succeed and BURN the token
+  const firstUse = db.validateAndBurnBirPasscode(testSession.passcode);
+  assert.equal(firstUse.success, true);
+  assert.equal(firstUse.session?.isUsed, true);
+  assert.equal(firstUse.session?.status, 'EXPIRED_USED');
+  assert.ok(firstUse.session?.usedAt);
+
+  // 3. Second validation: MUST FAIL with security alert (passcode burned)
+  const secondUse = db.validateAndBurnBirPasscode(testSession.passcode);
+  assert.equal(secondUse.success, false);
+  assert.match(secondUse.error || '', /has already been used and was burned/i);
+});
+
+test('BIR Tax Auditor Module calculates accurate 12% VAT and generates Stamped Income Tax Declaration for Paid Subscriptions', () => {
+  const declarations = db.getTaxDeclarations();
+  assert.ok(declarations.length >= 3, 'Should have seeded monthly and quarterly declarations');
+
+  const janMonthly = declarations.find(d => d.periodName === 'January 2026');
+  assert.ok(janMonthly, 'January 2026 declaration must exist');
+  assert.equal(janMonthly?.periodType, 'monthly');
+  assert.equal(janMonthly?.totalPaidSubscribers, 28450);
+
+  // Verify plan math
+  const planSum = janMonthly?.plans.reduce((acc, p) => acc + p.grossRevenuePhp, 0);
+  assert.equal(planSum, janMonthly?.grossSubscriptionsPhp);
+
+  // Verify 12% VAT and withholding
+  const expectedVat = janMonthly!.allowableDeductionsPhp;
+  assert.equal(janMonthly?.vatAmountPhp, expectedVat);
+  assert.ok(janMonthly?.birDocumentTrackingNumber.startsWith('BIR-DTN-'));
+  assert.equal(janMonthly?.stampedStatus, 'FILED_AND_CONFIRMED');
+  assert.ok(janMonthly?.smartContractAnchorTx.startsWith('0x'));
+  assert.ok(janMonthly?.blockchainEvidenceHash);
 });

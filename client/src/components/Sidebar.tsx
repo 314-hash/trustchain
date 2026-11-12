@@ -15,6 +15,7 @@ import {
   Settings,
   Sparkles,
   Zap,
+  Landmark,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -30,6 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, onS
     { id: 'my-audits', label: 'My Audits', icon: FolderGit2 },
     { id: 'tempest', label: 'TEMPEST Engine', icon: Zap, highlight: true },
     { id: 'streaming', label: 'Streaming Audit', icon: Tv },
+    { id: 'bir-tax-portal', label: 'BIR Tax Audit Portal', icon: Landmark, highlight: true },
     { id: 'publishing', label: 'Publishing Audit', icon: BookOpen },
     { id: 'smart-contract', label: 'Smart Contract Audit', icon: Code2 },
     { id: 'web-security', label: 'Web Security Audit', icon: Globe },

@@ -29,6 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onStartAuditClick })
     'my-audits': 'Audit Records & Verification Vault',
     tempest: 'TEMPEST Security Engine (T3MP3ST Multi-Agent Assessment)',
     streaming: 'Movie Streaming & HLS/DRM Security Audit',
+    'bir-tax-portal': 'BIR Tax Audit Portal (Paid Subscriptions Status & Stamped Tax Declaration)',
     publishing: 'E-Book & Digital Publishing Verification Portal',
     'smart-contract': 'Smart Contract Audit Engine (Solidity / EVM)',
     'web-security': 'Website & API Security Audit (OWASP / TLS Hardening)',

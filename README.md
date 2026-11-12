@@ -20,6 +20,7 @@ TRUSTCHAIN AUDIT is a unified public verification platform designed to make prof
 | **MODULE D: Blockchain Evidence Registry** | Tamper-evident attestation anchoring | Multi-chain EVM adapter supporting **Base (Coinbase L2)**, Ethereum, Polygon, and Arbitrum. Includes public verification tool and off-chain zero-gas fallback. |
 | **MODULE E: Website Security Audit** | Safe, non-destructive web audit | Evaluates HTTPS/TLS cipher stability, Content-Security-Policy (CSP), Strict-Transport-Security (HSTS), X-Frame-Options, server header leakage, and OWASP ZAP passive sweeps. |
 | **MODULE F: AI Audit Assistant** | Plain-language vulnerability translation | Converts technical CWE/SWC findings into simple business impact summaries and step-by-step remediation advice for non-technical founders. |
+| **MODULE G: BIR Tax Compliance & Subscription Audit** | Streaming Paid Subscriptions & Tax Stamping | Dedicated portal for assigned BIR Tax Auditors with single-use ephemeral passcodes / QR codes (burned on use). Inspects actual PAID Monthly & Quarterly subscription revenues and downloads certified PDFs stamped as filed Income Tax Declarations. |
 
 ---
 

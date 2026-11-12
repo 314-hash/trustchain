@@ -122,3 +122,58 @@ export interface AuditRecord {
   associatedCertificateId?: string;
 }
 
+export interface BirAuditorPasscodeSession {
+  sessionId: string;
+  passcode: string;
+  auditorName: string;
+  auditorBirId: string;
+  rdoCode: string;
+  assignedPlatform: string;
+  platformTin: string;
+  qrCodeUrl?: string;
+  expiresAt: string;
+  isUsed: boolean;
+  usedAt?: string;
+  status: 'ACTIVE_UNUSED' | 'EXPIRED_USED' | 'EXPIRED_TIMEOUT';
+}
+
+export interface SubscriptionPlanSummary {
+  planName: string;
+  tier: 'mobile' | 'standard' | 'premium';
+  priceMonthlyPhp: number;
+  activePaidSubscribers: number;
+  grossRevenuePhp: number;
+}
+
+export interface PaidSubscriptionTaxDeclaration {
+  id: string;
+  declarationNumber: string;
+  platformName: string;
+  tin: string;
+  rdoOffice: string;
+  periodType: 'monthly' | 'quarterly';
+  periodName: string; // e.g. "January 2026" or "Q1 2026"
+  year: number;
+  totalPaidSubscribers: number;
+  plans: SubscriptionPlanSummary[];
+  grossSubscriptionsPhp: number;
+  allowableDeductionsPhp: number;
+  netTaxableIncomePhp: number;
+  vatRatePercent: number; // 12%
+  vatAmountPhp: number;
+  withholdingTaxPhp: number;
+  totalTaxDuePhp: number;
+  paymentGatewayBreakdown: {
+    gateway: string;
+    percentage: number;
+    amountPhp: number;
+  }[];
+  smartContractAnchorTx: string;
+  blockchainEvidenceHash: string;
+  birDocumentTrackingNumber: string;
+  filingTimestamp: string;
+  auditorName: string;
+  auditorBirId: string;
+  stampedStatus: 'FILED_AND_CONFIRMED' | 'DRAFT';
+}
+

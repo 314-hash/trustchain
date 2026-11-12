@@ -592,5 +592,82 @@ router.post('/tempest/retest', (req, res) => {
   res.json(result);
 });
 
+// ==========================================
+// BIR TAX AUDITOR COMPLIANCE MODULE
+// Paid Monthly & Quarterly Subscriptions
+// Single-Use Expiring Passcode & QR Code
+// ==========================================
+
+// List BIR sessions
+router.get('/bir/sessions', (req, res) => {
+  res.json(db.getBirSessions());
+});
+
+// Provision a new single-use expiring access passcode & dynamic QR code for an assigned BIR Auditor
+router.post('/bir/provision-session', (req, res) => {
+  const { auditorName, auditorBirId, rdoCode, assignedPlatform, platformTin, ttlMinutes } = req.body;
+  if (!auditorName || !auditorBirId) {
+    return res.status(400).json({ error: 'Auditor Name and BIR ID / Employee Number are required.' });
+  }
+
+  const durationMinutes = ttlMinutes ? Number(ttlMinutes) : 15;
+  const sessionId = `BIR-SESS-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+  const randomSuffix = crypto.randomBytes(2).toString('hex').toUpperCase();
+  const randomPin = Math.floor(1000 + Math.random() * 9000);
+  const passcode = `BIR-2026-${randomPin}-${randomSuffix}`;
+  const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
+
+  const session = {
+    sessionId,
+    passcode,
+    auditorName,
+    auditorBirId,
+    rdoCode: rdoCode || 'RDO 033 - Large Taxpayers Regular Audit Division',
+    assignedPlatform: assignedPlatform || 'CineChain Streaming Ltd. (CineFlix Media)',
+    platformTin: platformTin || '009-842-192-000',
+    expiresAt,
+    isUsed: false,
+    status: 'ACTIVE_UNUSED' as const,
+  };
+
+  db.createBirSession(session);
+  res.json({ session });
+});
+
+// Verify and immediately BURN the single-use passcode / QR code token
+router.post('/bir/verify-access', (req, res) => {
+  const { passcode } = req.body;
+  if (!passcode) {
+    return res.status(400).json({ error: 'Passcode is required.' });
+  }
+
+  const result = db.validateAndBurnBirPasscode(passcode);
+  if (!result.success) {
+    return res.status(401).json({ error: result.error });
+  }
+
+  const declarations = db.getTaxDeclarations();
+  res.json({
+    authorized: true,
+    message: 'BIR Auditor authenticated successfully. Passcode has been burned/expired after this use for security.',
+    session: result.session,
+    declarations,
+  });
+});
+
+// Get all paid monthly and quarterly subscriptions
+router.get('/bir/subscriptions', (req, res) => {
+  res.json(db.getTaxDeclarations());
+});
+
+// Get single subscription declaration by ID
+router.get('/bir/declarations/:id', (req, res) => {
+  const decl = db.getTaxDeclarationById(req.params.id);
+  if (!decl) {
+    return res.status(404).json({ error: 'Tax declaration not found.' });
+  }
+  res.json(decl);
+});
+
 export default router;
 

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Tv, ShieldCheck, AlertTriangle, CheckCircle2, Play, Lock, Globe, Database, DollarSign, Sparkles } from 'lucide-react';
+import { Tv, ShieldCheck, AlertTriangle, CheckCircle2, Play, Lock, Globe, Database, DollarSign, Sparkles, Building, Landmark, ExternalLink } from 'lucide-react';
 import { AuditRecord } from '../types';
 
 interface StreamingAuditViewProps {
   onAuditCompleted: (audit: AuditRecord) => void;
+  onNavigateToBirPortal?: () => void;
 }
 
-export const StreamingAuditView: React.FC<StreamingAuditViewProps> = ({ onAuditCompleted }) => {
+export const StreamingAuditView: React.FC<StreamingAuditViewProps> = ({ onAuditCompleted, onNavigateToBirPortal }) => {
   const [platformName, setPlatformName] = useState('CineFlix Decentralized Streaming');
   const [streamingUrl, setStreamingUrl] = useState('https://stream.cineflix.io/hls/manifest.m3u8');
   const [drmProvider, setDrmProvider] = useState<'widevine' | 'fairplay' | 'aes-128' | 'none'>('widevine');
@@ -54,6 +55,16 @@ export const StreamingAuditView: React.FC<StreamingAuditViewProps> = ({ onAuditC
             Verify HLS/DASH manifest security, Widevine/FairPlay DRM encryption, CDN signed URL expiration, S3 storage policies, and content licensing agreements.
           </p>
         </div>
+
+        {onNavigateToBirPortal && (
+          <button
+            onClick={onNavigateToBirPortal}
+            className="py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500/15 to-amber-600/25 hover:from-amber-500/25 hover:to-amber-600/35 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-2 cursor-pointer shadow-md transition self-start md:self-auto"
+          >
+            <Building className="w-4 h-4 text-amber-400" />
+            <span>BIR Tax Audit Portal (Paid Subscriptions) &rarr;</span>
+          </button>
+        )}
       </div>
 
       {/* Audit Configuration Card */}

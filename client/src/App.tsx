@@ -16,6 +16,7 @@ import { ReportsView } from './components/ReportsView';
 import { TeamManagementView } from './components/TeamManagementView';
 import { SettingsView } from './components/SettingsView';
 import { PublicCertificatePage } from './components/PublicCertificatePage';
+import { BirAuditorPortalView } from './components/BirAuditorPortalView';
 import { AuditRecord, BlockchainCertificate, MovieRightsRecord, PublishingRecord } from './types';
 import { getLocalAudits, getLocalCertificates } from './services/clientAuditEngine';
 
@@ -64,11 +65,15 @@ export function App() {
   useEffect(() => {
     loadPlatformData();
 
-    // Support URL param e.g. ?verify=TC-CERT-PUB-9912
+    // Support URL param e.g. ?verify=TC-CERT-PUB-9912 or ?bir=1
     const params = new URLSearchParams(window.location.search);
     const verifyId = params.get('verify') || params.get('cert');
     if (verifyId) {
       setPublicCertId(verifyId);
+    }
+
+    if (params.get('bir') || params.get('bir_token') || params.get('token')) {
+      setCurrentTab('bir-tax-portal');
     }
   }, []);
 
@@ -155,7 +160,14 @@ export function App() {
           )}
 
           {currentTab === 'streaming' && (
-            <StreamingAuditView onAuditCompleted={handleAuditCompleted} />
+            <StreamingAuditView
+              onAuditCompleted={handleAuditCompleted}
+              onNavigateToBirPortal={() => setCurrentTab('bir-tax-portal')}
+            />
+          )}
+
+          {currentTab === 'bir-tax-portal' && (
+            <BirAuditorPortalView />
           )}
 
           {currentTab === 'publishing' && (
